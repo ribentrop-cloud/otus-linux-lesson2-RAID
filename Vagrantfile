@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
  	  box.vm.provision "shell", inline: <<-SHELL
 			mkdir -p ~root/.ssh
               cp ~vagrant/.ssh/auth* ~root/.ssh
-			yum install -y mdadm smartmontools hdparm gdisk
+			yum install -y mdadm smartmontools hdparm gdisk sgdisk
 			sudo sh -c "yes |  mdadm --zero-superblock --force /dev/sd{b,c,d,e,f}"
 			sleep 3
 			sudo mdadm --create --verbose /dev/md0 -l 5 -n 5 /dev/sd{b,c,d,e,f}
@@ -87,6 +87,17 @@ Vagrant.configure("2") do |config|
 			sudo sh -c 'echo "DEVICE partitions" > /etc/mdadm/mdadm.conf'
 			sudo sh -c 'sudo mdadm --detail --scan --verbose | grep ARRAY >> /etc/mdadm/mdadm.conf'
 			echo "--- FIN ---"
+			
+			sudo sgdisk --clear /dev/md0
+			sudo sgdisk -n 1:34:10000 -n 2:10001:20000 -n 3:20001:30000 -n 4:30001:40000 -n 5:40001:50000 /dev/md0
+			sudo sgdisk --print /dev/md0
+			for item in {1..5}
+				do
+				sudo mkfs.ext4 /dev/md0p$item
+				sleep 3
+				sudo mkdir /mnt/raid10_$item
+				sudo echo 'UUID='`blkid /dev/md0p$item -s UUID -o value`' /mnt/raid10_'$item'           ext4    defaults        0 1' >> /etc/fstab
+			done
   	  SHELL
       end
   end
