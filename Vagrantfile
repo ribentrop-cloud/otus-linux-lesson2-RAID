@@ -69,7 +69,8 @@ Vagrant.configure("2") do |config|
 			mkdir -p ~root/.ssh
               cp ~vagrant/.ssh/auth* ~root/.ssh
 			yum install -y mdadm smartmontools hdparm gdisk
-			sudo mdadm --zero-superblock --force /dev/sd{b,c,d,e,f}
+			sudo sh -c "yes |  mdadm --zero-superblock --force /dev/sd{b,c,d,e,f}"
+			sleep 3
 			sudo mdadm --create --verbose /dev/md0 -l 5 -n 5 /dev/sd{b,c,d,e,f}
 
 			while  [ "$(sudo mdadm -D /dev/md0 | grep "Rebuild Status")" ] ; do
