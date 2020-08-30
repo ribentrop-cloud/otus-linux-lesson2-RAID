@@ -12,9 +12,12 @@
                 }
 ```
 - в секции Provisioning добавлен скрипт для автосборки RAID 5 после загрузки.  
+- в секции Provisioning добавлены команды для создания пяти GPT разделов
 
 __Проверка:__
 1. vagrant up 
 2. vagrant ssh 
 3. cat /proc/mdstat
+4. lsblk
+5. cat /etc/fstab
 
