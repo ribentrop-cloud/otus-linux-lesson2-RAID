@@ -98,6 +98,7 @@ Vagrant.configure("2") do |config|
 				sudo mkdir /mnt/raid10_$item
 				sudo echo 'UUID='`blkid /dev/md0p$item -s UUID -o value`' /mnt/raid10_'$item'           ext4    defaults        0 1' >> /etc/fstab
 			done
+			sudo mount -a
   	  SHELL
       end
   end
